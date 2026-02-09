@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { LaunchAreaWithTiles } from "@/lib/supabase/types";
 import { LAUNCH_VIDEOS } from "@/app/config/launch-videos";
+import { EnglishGrammarRollingTitle } from "./english-grammar-rolling-title";
 import { TileListItem } from "./tile-list-item";
 
 type SectionBlockProps = {
@@ -76,12 +77,7 @@ export function SectionBlock({ area, index, isActive, onClick }: SectionBlockPro
               <span className="readtheory-ry inline-block">ry</span>
             </>
           ) : area.slug === "english-grammar" ? (
-            <span className="english-grammar-wrap">
-              <span className="english-rotate-y">English</span>
-              <span className="grammar-orbit-track">
-                <span className="grammar-orbit-word">Grammar</span>
-              </span>
-            </span>
+            <EnglishGrammarRollingTitle />
           ) : area.slug === "science" || area.slug === "my-workshops" ? (
             null
           ) : area.slug === "typing" ? (

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MyCoreSkills — Student Dashboard",
+  title: "MyCoreSkills",
   description: "Launch your learning apps",
 };
 

@@ -3,7 +3,8 @@
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
+import gsap from "gsap";
 import { AUTH_BACKGROUND_GIF } from "../config/auth";
 
 function LoginForm() {
@@ -13,6 +14,31 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const supabase = createClient();
+  const signInWrapRef = useRef<HTMLDivElement>(null);
+
+  const playSignInClick = () => {
+    if (loading) return;
+    try {
+      const wrap = signInWrapRef.current;
+      if (!wrap) return;
+      gsap.killTweensOf(wrap);
+      gsap.fromTo(
+        wrap,
+        { scale: 1 },
+        {
+          scale: 0.92,
+          duration: 0.1,
+          ease: "power2.in",
+          yoyo: true,
+          repeat: 1,
+          repeatDelay: 0.06,
+          clearProps: "scale",
+        }
+      );
+    } catch {
+      // ignore so sign-in always proceeds
+    }
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,13 +109,20 @@ function LoginForm() {
             {message.text}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50 disabled:pointer-events-none shadow-lg hover:shadow-blue-500/20 transition-all"
+        <div
+          ref={signInWrapRef}
+          className="inline-block w-full origin-center"
+          style={{ transformOrigin: "center" }}
         >
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            onClick={playSignInClick}
+            className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50 disabled:pointer-events-none shadow-lg hover:shadow-blue-500/20 transition-colors active:scale-[0.98]"
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </div>
       </form>
       <p className="mt-6 text-center text-slate-400 text-sm">
         Don&apos;t have an account?{" "}
