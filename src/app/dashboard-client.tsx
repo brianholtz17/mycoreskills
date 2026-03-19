@@ -3,20 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { LaunchAreaWithTiles } from "@/lib/supabase/types";
 import { SectionBlock, TileListOverlay } from "./components/section-block";
-import { createClient } from "@/lib/supabase/client";
 import { DASHBOARD_HERO_GIF } from "./config/auth";
 
 type DashboardClientProps = {
   initialAreas: LaunchAreaWithTiles[];
-  isAdmin?: boolean;
 };
 
-export function DashboardClient({ initialAreas, isAdmin = false }: DashboardClientProps) {
+export function DashboardClient({ initialAreas }: DashboardClientProps) {
   const [areas] = useState(initialAreas);
   const [openArea, setOpenArea] = useState<LaunchAreaWithTiles | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const supabase = createClient();
 
   const totalSections = 1 + areas.length;
 
@@ -36,11 +33,6 @@ export function DashboardClient({ initialAreas, isAdmin = false }: DashboardClie
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
-  };
 
   return (
     <div className="h-screen flex flex-col bg-neutral-950 text-white overflow-hidden">
@@ -66,26 +58,14 @@ export function DashboardClient({ initialAreas, isAdmin = false }: DashboardClie
           style={{ backgroundImage: `url(${DASHBOARD_HERO_GIF})` }}
         >
           <div className="absolute inset-0 bg-black/55 pointer-events-none" aria-hidden />
-          {/* Top-right: Admin + Sign out */}
+          {/* Top-right: Admin */}
           <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-            {isAdmin && (
-              <a
-                href="/admin"
-                className="text-sm text-neutral-300 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                Admin
-              </a>
-            )}
-            <button
-              type="button"
-              onClick={handleSignOut}
-              aria-label="Sign out"
-              className="p-2.5 rounded-xl text-neutral-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-transparent"
+            <a
+              href="/admin"
+              className="text-sm text-neutral-300 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
+              Admin
+            </a>
           </div>
           <h1 className="relative z-10 text-4xl md:text-5xl font-semibold tracking-tight text-white drop-shadow-md flex flex-wrap justify-center items-center gap-0">
             <span className="hero-word-my inline-block">My</span>

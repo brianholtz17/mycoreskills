@@ -58,7 +58,7 @@ export function SectionBlock({ area, index, isActive, onClick }: SectionBlockPro
         onClick={onClick}
         className="relative z-10 flex flex-col items-center justify-center h-full w-full text-white hover:bg-white/5 transition-colors cursor-pointer"
       >
-        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight drop-shadow-md flex flex-wrap justify-center items-center gap-0">
+        <h2 className="w-full text-3xl md:text-4xl font-semibold tracking-tight drop-shadow-md flex flex-wrap justify-center items-center gap-0">
           {area.slug === "math" ? (
             <>
               <span className="math-char-m inline-block">M</span>
@@ -68,13 +68,11 @@ export function SectionBlock({ area, index, isActive, onClick }: SectionBlockPro
             </>
           ) : area.slug === "reading" ? (
             <>
-              <span className="readtheory-char-r inline-block">R</span>
-              <span className="readtheory-char-e inline-block">e</span>
-              <span className="readtheory-char-a inline-block">a</span>
-              <span className="readtheory-char-d inline-block">d</span>
-              <span className="readtheory-th inline-block">Th</span>
-              <span className="readtheory-eo inline-block">eo</span>
-              <span className="readtheory-ry inline-block">ry</span>
+              <span className="reading-spelling-grid" aria-label="Reading and Spelling">
+                <span className="reading-spelling-word reading-word">Reading</span>
+                <span className="reading-spelling-and">and</span>
+                <span className="reading-spelling-word spelling-word">Spelling</span>
+              </span>
             </>
           ) : area.slug === "english-grammar" ? (
             <EnglishGrammarRollingTitle />
@@ -114,6 +112,12 @@ type TileListOverlayProps = {
 };
 
 export function TileListOverlay({ area, onClose }: TileListOverlayProps) {
+  const headerTitle =
+    area.slug === "reading"
+      ? "Reading and Spelling"
+      : area.slug === "english-grammar"
+        ? "English Grammar and Sentence Writing"
+        : area.title;
   return (
     <div className="fixed inset-0 z-50 bg-neutral-950 flex flex-col">
       <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-white/10">
@@ -127,7 +131,7 @@ export function TileListOverlay({ area, onClose }: TileListOverlayProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-lg font-semibold text-white">{area.title}</h1>
+        <h1 className="text-lg font-semibold text-white">{headerTitle}</h1>
         <div className="w-14" />
       </header>
       <div className="flex-1 overflow-y-auto p-4">

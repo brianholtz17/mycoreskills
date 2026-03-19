@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const TEXT = "English Grammar";
+const TEXT = "English Grammar and Sentence Writing";
 const CHARS = TEXT.split("");
 
 export function EnglishGrammarRollingTitle() {

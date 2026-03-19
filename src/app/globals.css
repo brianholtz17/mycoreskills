@@ -449,6 +449,99 @@ body {
   animation-delay: 0.5s;
 }
 
+/* Reading and Spelling:
+   - "Reading" slides in from the left
+   - "Spelling" slides in from the right
+   - "and" stays centered and pulses opacity (repeating) */
+@keyframes reading-spelling-from-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+  14% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  60% {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+}
+
+@keyframes reading-spelling-from-right {
+  0% {
+    opacity: 0;
+    transform: translateX(130%);
+  }
+  14% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  60% {
+    opacity: 0;
+    transform: translateX(130%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(130%);
+  }
+}
+
+@keyframes reading-spelling-and-pulse {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.reading-spelling-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.reading-spelling-word {
+  white-space: nowrap;
+}
+
+.reading-word {
+  justify-self: start;
+  animation: reading-spelling-from-left 5s ease-in-out infinite both;
+}
+
+.spelling-word {
+  justify-self: end;
+  animation: reading-spelling-from-right 5s ease-in-out infinite both;
+}
+
+.reading-spelling-and {
+  justify-self: center;
+  white-space: nowrap;
+  animation: reading-spelling-and-pulse 5s ease-in-out infinite both;
+}
+
 /* English Grammar: "English" rotates on Y-axis in center; "Grammar" orbits around it — repeating */
 @keyframes english-rotate-y {
   from {
@@ -670,6 +763,8 @@ body {
   .readtheory-th,
   .readtheory-eo,
   .readtheory-ry,
+  .reading-spelling-word,
+  .reading-spelling-and,
   .english-rotate-y,
   .grammar-orbit-track,
   .grammar-orbit-word,
@@ -704,5 +799,11 @@ body {
 
   .grammar-orbit-word {
     transform: translate(-50%, -50%);
+  }
+
+  .reading-word,
+  .spelling-word,
+  .reading-spelling-and {
+    transform: none;
   }
 }

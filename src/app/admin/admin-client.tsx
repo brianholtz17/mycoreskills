@@ -9,6 +9,7 @@ import {
   createTile,
   updateTile,
   deleteTile,
+  updateAdminPassword,
 } from "./actions";
 
 type Area = Awaited<ReturnType<typeof getAdminLaunchAreasWithTiles>>[number];
@@ -87,6 +88,11 @@ export function AdminClient({
   const [newTileUrl, setNewTileUrl] = useState("");
   const [draggedTileId, setDraggedTileId] = useState<string | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [currentAdminPassword, setCurrentAdminPassword] = useState("");
+  const [nextAdminPassword, setNextAdminPassword] = useState("");
+  const [confirmAdminPassword, setConfirmAdminPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
 
   const refresh = async () => {
     const next = await getAdminLaunchAreasWithTiles();
@@ -182,6 +188,26 @@ export function AdminClient({
     await refresh();
   };
 
+  const handleUpdateAdminPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage(null);
+    setPasswordSaving(true);
+    try {
+      await updateAdminPassword(currentAdminPassword, nextAdminPassword, confirmAdminPassword);
+      setCurrentAdminPassword("");
+      setNextAdminPassword("");
+      setConfirmAdminPassword("");
+      setPasswordMessage({ type: "success", text: "Admin password updated." });
+    } catch (err) {
+      setPasswordMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to update password.",
+      });
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <header className="flex items-center justify-between mb-8">
@@ -198,6 +224,58 @@ export function AdminClient({
       <p className="text-slate-600 text-sm mb-6">
         Reorder launch areas and tiles. Add, edit, hide, or remove tiles per area.
       </p>
+
+      <section className="rounded-lg border border-slate-200 bg-white shadow-sm p-4 mb-6">
+        <h2 className="text-lg font-semibold mb-2">Update Admin Password</h2>
+        <p className="text-slate-600 text-sm mb-4">
+          Change the password used to unlock the Admin page.
+        </p>
+        <form onSubmit={handleUpdateAdminPassword} className="grid gap-3">
+          <input
+            type="password"
+            placeholder="Current password"
+            value={currentAdminPassword}
+            onChange={(e) => setCurrentAdminPassword(e.target.value)}
+            className="px-3 py-2 rounded border border-slate-300 bg-white text-slate-900"
+            autoComplete="current-password"
+            required
+          />
+          <input
+            type="password"
+            placeholder="New password (min 8 chars)"
+            value={nextAdminPassword}
+            onChange={(e) => setNextAdminPassword(e.target.value)}
+            className="px-3 py-2 rounded border border-slate-300 bg-white text-slate-900"
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            value={confirmAdminPassword}
+            onChange={(e) => setConfirmAdminPassword(e.target.value)}
+            className="px-3 py-2 rounded border border-slate-300 bg-white text-slate-900"
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+          {passwordMessage ? (
+            <p className={`text-sm ${passwordMessage.type === "error" ? "text-red-600" : "text-emerald-600"}`}>
+              {passwordMessage.text}
+            </p>
+          ) : null}
+          <div>
+            <button
+              type="submit"
+              disabled={passwordSaving}
+              className="px-4 py-2 rounded bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
+            >
+              {passwordSaving ? "Updating..." : "Update Password"}
+            </button>
+          </div>
+        </form>
+      </section>
 
       <ul className="space-y-4">
         {areas.map((area, areaIndex) => (
@@ -233,7 +311,11 @@ export function AdminClient({
                 }
                 className="flex-1 text-left font-medium"
               >
-                {area.title}
+                {area.slug === "reading"
+                  ? "Reading and Spelling"
+                  : area.slug === "english-grammar"
+                    ? "English Grammar and Sentence Writing"
+                    : area.title}
               </button>
               <span className="text-slate-500 text-sm">
                 {area.tiles.length} tile{area.tiles.length !== 1 ? "s" : ""}

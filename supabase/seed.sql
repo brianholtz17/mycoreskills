@@ -1,8 +1,8 @@
 -- Seed launch areas (7 areas: Math, ReadTheory, English Grammar, Science, Typing, My Workshops, I'm Bored!)
 insert into public.launch_areas (id, slug, title, sort_order) values
   ('a0000001-0001-4000-8000-000000000001', 'math', 'Math', 1),
-  ('a0000001-0001-4000-8000-000000000002', 'reading', 'ReadTheory', 2),
-  ('a0000001-0001-4000-8000-000000000003', 'english-grammar', 'English Grammar', 3),
+  ('a0000001-0001-4000-8000-000000000002', 'reading', 'Reading and Spelling', 2),
+  ('a0000001-0001-4000-8000-000000000003', 'english-grammar', 'English Grammar and Sentence Writing', 3),
   ('a0000001-0001-4000-8000-000000000004', 'science', 'Science', 4),
   ('a0000001-0001-4000-8000-000000000005', 'typing', 'Typing', 5),
   ('a0000001-0001-4000-8000-000000000007', 'my-workshops', 'My Workshops', 6),

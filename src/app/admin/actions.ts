@@ -1,10 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 import { revalidatePath } from "next/cache";
+import { isValidAdminPassword, requireAdminUnlocked, setAdminPassword } from "./admin-auth";
 
 export async function getAdminLaunchAreasWithTiles() {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   const { data: areas, error: areasError } = await supabase
     .from("launch_areas")
     .select("*")
@@ -32,7 +34,8 @@ export async function getAdminLaunchAreasWithTiles() {
 }
 
 export async function reorderLaunchAreas(areaIds: string[]) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   for (let i = 0; i < areaIds.length; i++) {
     await supabase
       .from("launch_areas")
@@ -44,7 +47,8 @@ export async function reorderLaunchAreas(areaIds: string[]) {
 }
 
 export async function reorderTiles(launchAreaId: string, tileIds: string[]) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   for (let i = 0; i < tileIds.length; i++) {
     await supabase
       .from("tiles")
@@ -57,14 +61,16 @@ export async function reorderTiles(launchAreaId: string, tileIds: string[]) {
 }
 
 export async function updateLaunchArea(id: string, data: { title?: string }) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   await supabase.from("launch_areas").update(data).eq("id", id);
   revalidatePath("/");
   revalidatePath("/admin");
 }
 
 export async function createTile(launchAreaId: string, data: { title: string; url: string }) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   const { data: existing } = await supabase
     .from("tiles")
     .select("sort_order")
@@ -88,15 +94,40 @@ export async function updateTile(
   id: string,
   data: { title?: string; url?: string; is_visible?: boolean }
 ) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   await supabase.from("tiles").update(data).eq("id", id);
   revalidatePath("/");
   revalidatePath("/admin");
 }
 
 export async function deleteTile(id: string) {
-  const supabase = await createClient();
+  await requireAdminUnlocked();
+  const supabase = createServiceRoleClient();
   await supabase.from("tiles").delete().eq("id", id);
   revalidatePath("/");
   revalidatePath("/admin");
+}
+
+export async function updateAdminPassword(
+  currentPassword: string,
+  nextPassword: string,
+  confirmPassword: string
+) {
+  await requireAdminUnlocked();
+
+  if (!currentPassword || !nextPassword || !confirmPassword) {
+    throw new Error("All password fields are required.");
+  }
+  if (nextPassword.length < 8) {
+    throw new Error("New password must be at least 8 characters.");
+  }
+  if (nextPassword !== confirmPassword) {
+    throw new Error("New password and confirmation do not match.");
+  }
+  if (!(await isValidAdminPassword(currentPassword))) {
+    throw new Error("Current password is incorrect.");
+  }
+
+  await setAdminPassword(nextPassword);
 }
