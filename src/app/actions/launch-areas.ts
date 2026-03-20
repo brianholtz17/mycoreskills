@@ -1,11 +1,21 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 import type { LaunchArea, LaunchAreaWithTiles, Tile } from "@/lib/supabase/types";
 
 export async function getLaunchAreasWithTiles(): Promise<LaunchAreaWithTiles[]> {
-  const supabase = await createClient();
-  const { data: areas, error: areasError } = await supabase
+  const userScoped = await createClient();
+  const serviceRole = (() => {
+    try {
+      return createServiceRoleClient();
+    } catch {
+      return null;
+    }
+  })();
+  const reader = serviceRole ?? userScoped;
+
+  const { data: areas, error: areasError } = await reader
     .from("launch_areas")
     .select("*")
     .order("sort_order", { ascending: true });
@@ -13,7 +23,7 @@ export async function getLaunchAreasWithTiles(): Promise<LaunchAreaWithTiles[]> 
   if (areasError) throw areasError;
   if (!areas?.length) return [];
 
-  const { data: tiles, error: tilesError } = await supabase
+  const { data: tiles, error: tilesError } = await reader
     .from("tiles")
     .select("*")
     .eq("is_visible", true)

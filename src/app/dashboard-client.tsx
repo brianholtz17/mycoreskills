@@ -35,7 +35,7 @@ export function DashboardClient({ initialAreas }: DashboardClientProps) {
   }, [handleScroll]);
 
   return (
-    <div className="h-screen flex flex-col bg-neutral-950 text-white overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-neutral-950 text-white overflow-hidden">
       {/* Moving dot - only on hero (section 0) */}
       <div
         className="fixed left-1/2 bottom-8 z-20 -translate-x-1/2 transition-opacity duration-300 pointer-events-none"
@@ -48,8 +48,11 @@ export function DashboardClient({ initialAreas }: DashboardClientProps) {
       {/* Scroll container */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto snap-y snap-mandatory scroll-smooth"
-        style={{ scrollSnapType: "y mandatory" }}
+        className="flex-1 overflow-y-auto overscroll-y-contain touch-pan-y snap-y snap-proximity scroll-smooth"
+        style={{
+          scrollSnapType: "y proximity",
+          WebkitOverflowScrolling: "touch",
+        }}
       >
         {/* Hero - top page with GIF background */}
         <section
