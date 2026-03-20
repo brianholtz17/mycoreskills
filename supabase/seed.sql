@@ -1,16 +1,20 @@
--- Seed launch areas (7 areas: Math, ReadTheory, English Grammar, Science, Typing, My Workshops, I'm Bored!)
+-- Seed launch areas (8 areas)
 insert into public.launch_areas (id, slug, title, sort_order) values
   ('a0000001-0001-4000-8000-000000000001', 'math', 'Math', 1),
   ('a0000001-0001-4000-8000-000000000002', 'reading', 'Reading and Spelling', 2),
   ('a0000001-0001-4000-8000-000000000003', 'english-grammar', 'English Grammar and Sentence Writing', 3),
   ('a0000001-0001-4000-8000-000000000004', 'science', 'Science', 4),
-  ('a0000001-0001-4000-8000-000000000005', 'typing', 'Typing', 5),
-  ('a0000001-0001-4000-8000-000000000007', 'my-workshops', 'My Workshops', 6),
-  ('a0000001-0001-4000-8000-000000000006', 'im-bored', 'I''m Bored!', 7)
+  ('a0000001-0001-4000-8000-000000000008', 'geography-of-the-world', 'Geography of the World', 5),
+  ('a0000001-0001-4000-8000-000000000005', 'typing', 'Typing', 6),
+  ('a0000001-0001-4000-8000-000000000007', 'my-workshops', 'My Workshops', 7),
+  ('a0000001-0001-4000-8000-000000000006', 'im-bored', 'I''m Bored!', 8)
 on conflict do nothing;
 
--- Ensure I'm Bored! is last (sort_order 7) when re-running seed
-update public.launch_areas set sort_order = 7 where slug = 'im-bored';
+-- Keep a deterministic launch-area order when re-running seed
+update public.launch_areas set sort_order = 5 where slug = 'geography-of-the-world';
+update public.launch_areas set sort_order = 6 where slug = 'typing';
+update public.launch_areas set sort_order = 7 where slug = 'my-workshops';
+update public.launch_areas set sort_order = 8 where slug = 'im-bored';
 
 -- Tiles (sample data from Brian's list)
 -- Math

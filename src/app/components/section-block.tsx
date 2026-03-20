@@ -76,7 +76,17 @@ export function SectionBlock({ area, index, isActive, onClick }: SectionBlockPro
             </>
           ) : area.slug === "english-grammar" ? (
             <EnglishGrammarRollingTitle />
-          ) : area.slug === "science" || area.slug === "my-workshops" ? (
+          ) : area.slug === "science" ? (
+            <>
+              <span className="science-char-s inline-block">S</span>
+              <span className="science-char-c inline-block">c</span>
+              <span className="science-char-i inline-block">i</span>
+              <span className="science-char-e inline-block">e</span>
+              <span className="science-char-n inline-block">n</span>
+              <span className="science-char-c2 inline-block">c</span>
+              <span className="science-char-e2 inline-block">e</span>
+            </>
+          ) : area.slug === "my-workshops" || area.slug === "geography-of-the-world" ? (
             null
           ) : area.slug === "typing" ? (
             <>
